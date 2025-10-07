@@ -1,0 +1,1 @@
+import{_ as e,j as t}from"./charts-7e225b83.js";var o=e((e,o)=>{let a;"sandbox"===o&&(a=t("#i"+e));return t("sandbox"===o?a.nodes()[0].contentDocument.body:"body").select(`[id="${e}"]`)},"getDiagramElement");export{o as g};

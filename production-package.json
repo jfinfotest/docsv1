@@ -1,0 +1,27 @@
+{
+  "name": "fusiondoc-production",
+  "version": "1.0.0",
+  "description": "FusionDoc - Servidor de producción",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:pm2": "pm2 start server.js --name fusiondoc"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "compression": "^1.7.4",
+    "helmet": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "documentation",
+    "static-site",
+    "react",
+    "production"
+  ],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}

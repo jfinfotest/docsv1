@@ -1,0 +1,60 @@
+/* Import external dependencies first */
+@import 'animate.css';
+@import 'katex/dist/katex.min.css';
+
+/* Import Tailwind CSS */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom CSS variables for theming */
+:root {
+  --color-primary-50: 239 246 255;
+  --color-primary-100: 219 234 254;
+  --color-primary-200: 191 219 254;
+  --color-primary-300: 147 197 253;
+  --color-primary-400: 96 165 250;
+  --color-primary-500: 59 130 246;
+  --color-primary-600: 37 99 235;
+  --color-primary-700: 29 78 216;
+  --color-primary-800: 30 64 175;
+  --color-primary-900: 30 58 138;
+}
+
+/* Dark mode variables */
+.dark {
+  --color-primary-50: 30 58 138;
+  --color-primary-100: 30 64 175;
+  --color-primary-200: 29 78 216;
+  --color-primary-300: 37 99 235;
+  --color-primary-400: 59 130 246;
+  --color-primary-500: 96 165 250;
+  --color-primary-600: 147 197 253;
+  --color-primary-700: 191 219 254;
+  --color-primary-800: 219 234 254;
+  --color-primary-900: 239 246 255;
+}
+
+/* Custom styles for better integration */
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+}
+
+/* Prism.js custom styling for dark mode */
+.dark pre[class*="language-"] {
+  @apply bg-gray-800;
+}
+
+.dark code[class*="language-"] {
+  @apply text-gray-100;
+}
+
+/* Mermaid diagram styling */
+.mermaid {
+  @apply flex justify-center;
+}
+
+/* Chart.js container styling */
+.chart-container {
+  @apply relative w-full h-96;
+}

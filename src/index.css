@@ -1,0 +1,77 @@
+@import 'animate.css';
+@import 'katex/dist/katex.min.css';
+
+/* Main CSS file for the documentation site */
+
+/* Import Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import Tabler Icons CSS */
+/* Tabler Icons are used as individual SVG components, no CSS import needed */
+
+/* Custom styles */
+.dark .prism-code {
+  background: #1a202c !important;
+}
+
+.light .prism-code {
+  background: #f7fafc !important;
+}
+
+/* Ensure icons are properly sized */
+.ti {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: middle;
+}
+
+/* Custom scrollbar styles (already in index.html but keeping here for consistency) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Prevent overscroll behavior and global scroll */
+html, body {
+  overscroll-behavior: none;
+  overflow: hidden;
+  height: 100%;
+}
+
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-scroll-container {
+  overscroll-behavior: contain;
+}
