@@ -116,42 +116,115 @@ function updateIndexHtml(versionHash) {
       `src="$1?v=${versionHash}&t=${timestamp}"`
     );
     
-    // Agregar meta tags de versión y cache busting
-    const versionMeta = `<meta name="pwa-version" content="${versionHash}">`;
-    const timestampMeta = `<meta name="pwa-timestamp" content="${timestamp}">`;
-    const cacheBustingMetas = `<meta name="cache-control" content="no-cache, no-store, must-revalidate">\n    <meta name="pragma" content="no-cache">\n    <meta name="expires" content="0">`;
+    // Agregar meta tags de cache busting ULTRA-AGRESIVO
+    const cacheMetaTags = `
+    <meta name="pwa-version" content="${versionHash}">
+    <meta name="pwa-timestamp" content="${timestamp}">
+    <meta name="pwa-last-update" content="${new Date().toISOString()}">
+    <meta name="pwa-force-update" content="true">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="last-modified" content="${new Date().toUTCString()}">
+    <meta http-equiv="etag" content="${versionHash}-${timestamp}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <script>
+      // CACHE BUSTING ULTRA-AGRESIVO EN EL CLIENTE
+      if ('serviceWorker' in navigator) {
+        // Limpiar cache del navegador inmediatamente
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        
+        // Verificar versión en localStorage
+        const currentVersion = '${versionHash}';
+        const storedVersion = localStorage.getItem('pwa-version');
+        
+        if (storedVersion && storedVersion !== currentVersion) {
+          console.log('🔄 Versión diferente detectada en index.html, limpiando todo...');
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Desregistrar todos los SW
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            registrations.forEach(reg => reg.unregister());
+          });
+          
+          // Recargar después de limpiar
+          setTimeout(() => {
+            window.location.reload(true);
+          }, 500);
+        }
+        
+        localStorage.setItem('pwa-version', currentVersion);
+        localStorage.setItem('pwa-timestamp', '${timestamp}');
+      }
+      
+      // Prevenir cache del navegador
+      window.addEventListener('beforeunload', () => {
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+      });
+    </script>`;
     
-    // Reemplazar o agregar meta de versión
+    // Limpiar meta tags existentes de PWA y cache
     htmlContent = htmlContent.replace(
-      /<meta name="pwa-version"[^>]*>/g,
-      versionMeta
+      /<meta name="pwa-[^"]*"[^>]*>\s*/g,
+      ''
+    );
+    htmlContent = htmlContent.replace(
+      /<meta http-equiv="(cache-control|pragma|expires|last-modified|etag)"[^>]*>\s*/g,
+      ''
+    );
+    htmlContent = htmlContent.replace(
+      /<meta name="robots"[^>]*>\s*/g,
+      ''
     );
     
-    if (!htmlContent.includes('pwa-version')) {
-      htmlContent = htmlContent.replace(
-        /<head>/,
-        `<head>\n    ${versionMeta}`
-      );
-    }
+    // Limpiar scripts de cache busting anteriores
+    htmlContent = htmlContent.replace(
+      /<script>[\s\S]*?CACHE BUSTING[\s\S]*?<\/script>\s*/g,
+      ''
+    );
     
-    // Agregar meta de timestamp
-    if (!htmlContent.includes('pwa-timestamp')) {
-      htmlContent = htmlContent.replace(
-        versionMeta,
-        `${versionMeta}\n    ${timestampMeta}`
-      );
-    }
-    
-    // Agregar metas de cache busting
-    if (!htmlContent.includes('cache-control')) {
-      htmlContent = htmlContent.replace(
-        timestampMeta,
-        `${timestampMeta}\n    ${cacheBustingMetas}`
-      );
-    }
+    // Agregar todos los meta tags de cache busting ULTRA-AGRESIVO
+     if (!htmlContent.includes('pwa-version')) {
+       htmlContent = htmlContent.replace(
+         /<head>/,
+         `<head>${cacheMetaTags}`
+       );
+     }
+     
+     // Agregar script ultra-cache-buster antes del cierre de body
+     const ultraCacheBusterScript = `
+     <script src="./ultra-cache-buster.js?v=${versionHash}&t=${timestamp}" defer></script>`;
+     
+     // Limpiar scripts anteriores del ultra-cache-buster
+     htmlContent = htmlContent.replace(
+       /<script src="\.\/ultra-cache-buster\.js[^"]*"[^>]*><\/script>\s*/g,
+       ''
+     );
+     
+     // Agregar el script antes del cierre de body
+     if (!htmlContent.includes('ultra-cache-buster.js')) {
+       htmlContent = htmlContent.replace(
+         /<\/body>/,
+         `${ultraCacheBusterScript}\n  </body>`
+       );
+     }
 
     fs.writeFileSync(INDEX_FILE, htmlContent);
-    console.log('✅ index.html actualizado con cache busting agresivo');
+    console.log('✅ index.html actualizado con cache busting ULTRA-AGRESIVO y script de limpieza automática');
+    console.log(`   📊 Versión: ${versionHash}`);
+    console.log(`   ⏰ Timestamp: ${timestamp}`);
+    console.log('   🧹 Limpieza automática de cache habilitada');
+    console.log('   🔄 Detección automática de versiones habilitada');
     return true;
   } catch (error) {
     console.error('❌ Error actualizando index.html:', error.message);
@@ -160,7 +233,7 @@ function updateIndexHtml(versionHash) {
 }
 
 /**
- * Actualiza el service worker con estrategia de actualización forzada
+ * Actualiza el service worker con estrategia de actualización ULTRA-AGRESIVA
  */
 function updateServiceWorker() {
   if (!fs.existsSync(SW_FILE)) {
@@ -182,11 +255,11 @@ function updateServiceWorker() {
     // Agregar nuevo comentario de versión
     swContent = versionComment + swContent;
     
-    // Agregar estrategia de actualización agresiva
-    const updateStrategy = `\n// Estrategia de actualización forzada\nself.addEventListener('install', event => {\n  console.log('SW: Instalando versión ${versionHash}');\n  self.skipWaiting();\n});\n\nself.addEventListener('activate', event => {\n  console.log('SW: Activando versión ${versionHash}');\n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames.map(cacheName => {\n          console.log('SW: Eliminando cache:', cacheName);\n          return caches.delete(cacheName);\n        })\n      );\n    }).then(() => {\n      console.log('SW: Todos los caches eliminados para versión ${versionHash}');\n      return self.clients.claim();\n    })\n  );\n});\n\nself.addEventListener('message', event => {\n  if (event.data && event.data.type === 'SKIP_WAITING') {\n    self.skipWaiting();\n  }\n});\n`;
+    // Agregar estrategia de actualización ULTRA-AGRESIVA
+    const updateStrategy = `\n// ESTRATEGIA DE ACTUALIZACIÓN ULTRA-AGRESIVA\nconst FORCE_VERSION = '${versionHash}';\nconst FORCE_TIMESTAMP = ${timestamp};\n\n// Instalar inmediatamente sin esperar\nself.addEventListener('install', event => {\n  console.log('🚀 SW: Instalando versión ULTRA-AGRESIVA:', FORCE_VERSION);\n  \n  event.waitUntil(\n    // Limpiar TODOS los caches antes de instalar\n    caches.keys().then(cacheNames => {\n      console.log('🗑️ SW: Eliminando TODOS los caches durante instalación');\n      return Promise.all(\n        cacheNames.map(cacheName => {\n          console.log('🗑️ SW: Eliminando cache:', cacheName);\n          return caches.delete(cacheName);\n        })\n      );\n    }).then(() => {\n      console.log('✅ SW: Todos los caches eliminados durante instalación');\n      // Forzar activación inmediata\n      return self.skipWaiting();\n    })\n  );\n});\n\nself.addEventListener('activate', event => {\n  console.log('⚡ SW: Activando versión ULTRA-AGRESIVA:', FORCE_VERSION);\n  \n  event.waitUntil(\n    Promise.all([\n      // Limpiar TODOS los caches nuevamente durante activación\n      caches.keys().then(cacheNames => {\n        console.log('🧹 SW: Limpieza FINAL de todos los caches');\n        return Promise.all(\n          cacheNames.map(cacheName => {\n            console.log('🗑️ SW: Eliminando cache final:', cacheName);\n            return caches.delete(cacheName);\n          })\n        );\n      }),\n      // Tomar control inmediato de todos los clientes\n      self.clients.claim(),\n      // Notificar a todos los clientes que se actualicen\n      self.clients.matchAll().then(clients => {\n        clients.forEach(client => {\n          console.log('📢 SW: Notificando actualización a cliente');\n          client.postMessage({\n            type: 'FORCE_UPDATE',\n            version: FORCE_VERSION,\n            timestamp: FORCE_TIMESTAMP\n          });\n        });\n      })\n    ]).then(() => {\n      console.log('✅ SW: Activación ULTRA-AGRESIVA completada');\n    })\n  );\n});\n\n// Listener para mensajes de forzar actualización\nself.addEventListener('message', event => {\n  console.log('📨 SW: Mensaje recibido:', event.data);\n  \n  if (event.data && event.data.type === 'SKIP_WAITING') {\n    console.log('⏭️ SW: Forzando skip waiting');\n    self.skipWaiting();\n  }\n  \n  if (event.data && event.data.type === 'FORCE_CACHE_CLEAR') {\n    console.log('🧹 SW: Forzando limpieza de cache por mensaje');\n    event.waitUntil(\n      caches.keys().then(cacheNames => {\n        return Promise.all(cacheNames.map(name => caches.delete(name)));\n      }).then(() => {\n        console.log('✅ SW: Cache limpiado por mensaje');\n        // Responder al cliente\n        event.ports[0]?.postMessage({ success: true });\n      })\n    );\n  }\n});\n\n// Interceptar TODAS las peticiones para forzar actualizaciones\nself.addEventListener('fetch', event => {\n  const url = new URL(event.request.url);\n  \n  // Para archivos críticos, siempre ir a la red\n  if (url.pathname.includes('config.json') || \n      url.pathname.includes('manifest.webmanifest') || \n      url.pathname.includes('index.html') ||\n      url.pathname.includes('sw.js') ||\n      url.pathname.includes('registerSW.js')) {\n    \n    console.log('🌐 SW: Forzando red para archivo crítico:', url.pathname);\n    \n    event.respondWith(\n      fetch(event.request.clone(), {\n        cache: 'no-store',\n        headers: {\n          'Cache-Control': 'no-cache, no-store, must-revalidate',\n          'Pragma': 'no-cache',\n          'Expires': '0'\n        }\n      }).then(response => {\n        // No cachear archivos críticos\n        return response;\n      }).catch(() => {\n        // Si falla la red, intentar desde cache como último recurso\n        return caches.match(event.request);\n      })\n    );\n    return;\n  }\n});\n`;
     
     // Agregar estrategia si no está presente
-    if (!swContent.includes('Estrategia de actualización forzada')) {
+    if (!swContent.includes('ESTRATEGIA DE ACTUALIZACIÓN ULTRA-AGRESIVA')) {
       swContent = swContent.replace(versionComment, versionComment + updateStrategy);
     }
     
@@ -197,7 +270,7 @@ function updateServiceWorker() {
     );
 
     fs.writeFileSync(SW_FILE, swContent);
-    console.log(`✅ Service Worker actualizado con versión: ${versionHash} y estrategia forzada`);
+    console.log(`✅ Service Worker actualizado con versión: ${versionHash} y estrategia ULTRA-AGRESIVA`);
     return true;
   } catch (error) {
     console.error('❌ Error actualizando Service Worker:', error.message);
@@ -206,15 +279,15 @@ function updateServiceWorker() {
 }
 
 /**
- * Actualiza o crea registerSW.js con estrategia de actualización forzada
+ * Actualiza o crea registerSW.js con estrategia de actualización ULTRA-AGRESIVA
  */
 function updateRegisterSW(versionHash) {
   const timestamp = Date.now();
-  const newContent = `// PWA Registration - Version: ${versionHash} - ${new Date().toISOString()}\nif('serviceWorker' in navigator) {\n  window.addEventListener('load', () => {\n    navigator.serviceWorker.register('/docsv1/sw.js?v=${versionHash}&t=${timestamp}', { \n      scope: '/docsv1/',\n      updateViaCache: 'none'\n    }).then(registration => {\n      console.log('SW: Registrado con versión ${versionHash}');\n      \n      // Forzar verificación de actualización\n      registration.addEventListener('updatefound', () => {\n        const newWorker = registration.installing;\n        newWorker.addEventListener('statechange', () => {\n          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {\n            console.log('SW: Nueva versión disponible, forzando actualización');\n            newWorker.postMessage({type: 'SKIP_WAITING'});\n            window.location.reload(true);\n          }\n        });\n      });\n      \n      // Verificar actualizaciones cada 30 segundos\n      setInterval(() => {\n        registration.update();\n      }, 30000);\n      \n    }).catch(error => {\n      console.error('SW: Falló el registro:', error);\n    });\n  });\n}\n\n// Forzar limpieza de cache en carga\nif ('caches' in window) {\n  caches.keys().then(cacheNames => {\n    const oldCaches = cacheNames.filter(name => !name.includes('${versionHash}'));\n    return Promise.all(oldCaches.map(name => caches.delete(name)));\n  });\n}`;
+  const newContent = `// PWA Registration - Version: ${versionHash} - ${new Date().toISOString()}\n\n// CACHE BUSTING ULTRA-AGRESIVO\nconst FORCE_UPDATE_VERSION = '${versionHash}';\nconst FORCE_UPDATE_TIMESTAMP = ${timestamp};\n\n// Limpiar todos los caches del navegador ANTES de registrar SW\nif ('caches' in window) {\n  caches.keys().then(cacheNames => {\n    return Promise.all(\n      cacheNames.map(cacheName => {\n        console.log('🗑️ Eliminando cache del navegador:', cacheName);\n        return caches.delete(cacheName);\n      })\n    );\n  }).then(() => {\n    console.log('🧹 Todos los caches del navegador eliminados');\n  });\n}\n\n// Forzar limpieza de localStorage y sessionStorage\ntry {\n  const keysToRemove = [];\n  for (let i = 0; i < localStorage.length; i++) {\n    const key = localStorage.key(i);\n    if (key && (key.includes('pwa') || key.includes('cache') || key.includes('version'))) {\n      keysToRemove.push(key);\n    }\n  }\n  keysToRemove.forEach(key => localStorage.removeItem(key));\n  \n  // Guardar nueva versión\n  localStorage.setItem('pwa-version', FORCE_UPDATE_VERSION);\n  localStorage.setItem('pwa-timestamp', FORCE_UPDATE_TIMESTAMP.toString());\n  localStorage.setItem('pwa-last-update', new Date().toISOString());\n} catch (e) {\n  console.warn('No se pudo limpiar localStorage:', e);\n}\n\nif ('serviceWorker' in navigator) {\n  // Desregistrar TODOS los service workers existentes\n  navigator.serviceWorker.getRegistrations().then(registrations => {\n    registrations.forEach(registration => {\n      console.log('🗑️ Desregistrando SW anterior:', registration.scope);\n      registration.unregister();\n    });\n    \n    // Esperar un momento antes de registrar el nuevo SW\n    setTimeout(() => {\n      registerNewServiceWorker();\n    }, 1000);\n  });\n} else {\n  registerNewServiceWorker();\n}\n\nfunction registerNewServiceWorker() {\n  navigator.serviceWorker.register('/docsv1/sw.js?v=${versionHash}&t=${timestamp}&force=true', {\n    scope: '/docsv1/',\n    updateViaCache: 'none'\n  }).then(registration => {\n    console.log('🚀 SW registrado con versión ULTRA-AGRESIVA:', FORCE_UPDATE_VERSION);\n    \n    // Forzar activación inmediata\n    if (registration.waiting) {\n      registration.waiting.postMessage({ type: 'SKIP_WAITING' });\n    }\n    \n    // Listener para nuevas versiones\n    registration.addEventListener('updatefound', () => {\n      const newWorker = registration.installing;\n      console.log('🔄 Nueva versión de SW detectada');\n      \n      newWorker.addEventListener('statechange', () => {\n        if (newWorker.state === 'installed') {\n          console.log('⚡ Forzando recarga INMEDIATA...');\n          // Limpiar caches antes de recargar\n          if ('caches' in window) {\n            caches.keys().then(cacheNames => {\n              return Promise.all(cacheNames.map(name => caches.delete(name)));\n            }).then(() => {\n              window.location.reload(true);\n            });\n          } else {\n            window.location.reload(true);\n          }\n        }\n      });\n    });\n    \n    // Verificar actualizaciones cada 10 segundos (más agresivo)\n    setInterval(() => {\n      registration.update();\n    }, 10000);\n    \n    // Forzar actualización inmediata\n    registration.update();\n    \n  }).catch(error => {\n    console.error('❌ Error en registro de SW:', error);\n    // Si falla, intentar recargar la página\n    setTimeout(() => {\n      window.location.reload(true);\n    }, 2000);\n  });\n}\n\n// Listener para cambios de visibilidad (cuando el usuario vuelve a la pestaña)\ndocument.addEventListener('visibilitychange', () => {\n  if (!document.hidden) {\n    console.log('👁️ Pestaña visible, verificando actualizaciones...');\n    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {\n      navigator.serviceWorker.getRegistration().then(registration => {\n        if (registration) {\n          registration.update();\n        }\n      });\n    }\n  }\n});\n\n// Forzar recarga si la versión en localStorage es diferente\nconst storedVersion = localStorage.getItem('pwa-version');\nif (storedVersion && storedVersion !== FORCE_UPDATE_VERSION) {\n  console.log('🔄 Versión diferente detectada, forzando recarga...');\n  localStorage.setItem('pwa-version', FORCE_UPDATE_VERSION);\n  window.location.reload(true);\n}`;
   
   try {
     fs.writeFileSync(REGISTER_SW_FILE, newContent);
-    console.log(`✅ registerSW.js actualizado con estrategia forzada`);
+    console.log(`✅ registerSW.js actualizado con estrategia ULTRA-AGRESIVA`);
     return true;
   } catch (error) {
     console.error('❌ Error actualizando registerSW.js:', error.message);
@@ -324,6 +397,22 @@ function main() {
   
   // 6. Crear script de invalidación de cache
   if (versionHash && !createCacheInvalidationScript(versionHash)) success = false;
+  
+  // 7. Copiar ultra-cache-buster.js al directorio dist
+  try {
+    const sourcePath = path.join(__dirname, 'ultra-cache-buster.js');
+    const destPath = path.join(DIST_DIR, 'ultra-cache-buster.js');
+    
+    if (fs.existsSync(sourcePath)) {
+      fs.copyFileSync(sourcePath, destPath);
+      console.log('✅ ultra-cache-buster.js copiado al directorio dist');
+    } else {
+      console.warn('⚠️ ultra-cache-buster.js no encontrado en el directorio public');
+    }
+  } catch (error) {
+    console.error('❌ Error copiando ultra-cache-buster.js:', error.message);
+    success = false;
+  }
   
   if (success) {
     console.log('\n🎉 ¡PWA actualizada exitosamente con cache busting AGRESIVO!');

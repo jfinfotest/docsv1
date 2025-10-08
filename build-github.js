@@ -62,11 +62,14 @@ const distPackageJson = {
 const distPackageJsonPath = path.join(__dirname, 'dist', 'package.json');
 fs.writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-// Copiar scripts necesarios a dist
+// Copiar scripts necesarios a dist (incluyendo ultra-cache-buster)
 console.log('📋 Copying update scripts to dist...');
 const scriptsTooCopy = [
   'update-file-manifest.js',
-  'force-pwa-update.js'
+  'force-pwa-update.js',
+  'ultra-cache-buster.js',
+  'build-and-update.js',
+  'deploy-with-pwa-update.js'
 ];
 
 scriptsTooCopy.forEach(script => {
@@ -88,11 +91,29 @@ if (fs.existsSync(manifestPath)) {
   execSync('node dist/update-file-manifest.js', { stdio: 'inherit' });
 }
 
+// Ejecutar automáticamente la actualización PWA ultra-agresiva
+console.log('🚀 Applying ultra-aggressive PWA cache busting...');
+try {
+  execSync('node dist/force-pwa-update.js', { stdio: 'inherit' });
+  console.log('✅ Ultra-aggressive PWA cache busting applied successfully!');
+} catch (error) {
+  console.error('❌ Error applying PWA cache busting:', error.message);
+  console.log('⚠️ Build completed but PWA cache busting failed');
+}
+
 console.log('✅ GitHub Pages build completed successfully!');
 console.log(`📦 Files are ready in the 'dist' directory`);
 console.log(`🌐 Base path configured: ${githubBasePath}`);
 console.log('📋 Package.json created in dist with update scripts');
+console.log('🚀 Ultra-aggressive cache busting automatically applied');
 console.log('🔄 Available scripts in dist:');
 console.log('  - npm run update-manifest');
 console.log('  - npm run force-pwa-update');
 console.log('  - npm run update-all');
+console.log('');
+console.log('💡 Features automatically included:');
+console.log('  ✓ Ultra-aggressive cache busting');
+console.log('  ✓ Automatic PWA version management');
+console.log('  ✓ Service Worker forced updates');
+console.log('  ✓ Complete browser cache invalidation');
+console.log('  ✓ Real-time config.json change detection');

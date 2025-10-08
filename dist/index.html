@@ -1,11 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="pwa-version" content="be28953b">
-    <meta name="pwa-timestamp" content="1759935672733">
-    <meta name="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta name="pragma" content="no-cache">
-    <meta name="expires" content="0">
+    <meta name="pwa-version" content="c5d91a98">
+    <meta name="pwa-timestamp" content="1759936723016">
+    <meta name="pwa-last-update" content="2025-10-08T15:18:43.016Z">
+    <meta name="pwa-force-update" content="true">
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="last-modified" content="Wed, 08 Oct 2025 15:18:43 GMT">
+    <meta http-equiv="etag" content="c5d91a98-1759936723016">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <script>
+      // CACHE BUSTING ULTRA-AGRESIVO EN EL CLIENTE
+      if ('serviceWorker' in navigator) {
+        // Limpiar cache del navegador inmediatamente
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        
+        // Verificar versión en localStorage
+        const currentVersion = 'c5d91a98';
+        const storedVersion = localStorage.getItem('pwa-version');
+        
+        if (storedVersion && storedVersion !== currentVersion) {
+          console.log('🔄 Versión diferente detectada en index.html, limpiando todo...');
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          // Desregistrar todos los SW
+          navigator.serviceWorker.getRegistrations().then(registrations => {
+            registrations.forEach(reg => reg.unregister());
+          });
+          
+          // Recargar después de limpiar
+          setTimeout(() => {
+            window.location.reload(true);
+          }, 500);
+        }
+        
+        localStorage.setItem('pwa-version', currentVersion);
+        localStorage.setItem('pwa-timestamp', '1759936723016');
+      }
+      
+      // Prevenir cache del navegador
+      window.addEventListener('beforeunload', () => {
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+      });
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" href="favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -48,13 +97,15 @@
       }
     </style>
 <!-- Import map removed - all dependencies are now installed locally via npm -->
-  <script type="module" crossorigin src="/docsv1/assets/index-372bbf0d.js?v=be28953b&t=1759935961693"></script>
-  <link rel="stylesheet" href="/docsv1/assets/index-887cadb8.css?v=be28953b&t=1759935961693">
-<link rel="manifest" href="/docsv1/manifest.webmanifest?v=be28953b&t=1759935961693"><script id="vite-plugin-pwa:register-sw" src="/docsv1/registerSW.js?v=be28953b&t=1759935961693"></script></head>
+  <script type="module" crossorigin src="/docsv1/assets/index-372bbf0d.js?v=c5d91a98&t=1759936723016"></script>
+  <link rel="stylesheet" href="/docsv1/assets/index-887cadb8.css?v=c5d91a98&t=1759936723016">
+<link rel="manifest" href="/docsv1/manifest.webmanifest?v=c5d91a98&t=1759936723016"><script id="vite-plugin-pwa:register-sw" src="/docsv1/registerSW.js?v=c5d91a98&t=1759936723016"></script></head>
 <body class="bg-white dark:bg-gray-900">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <div id="modal-root"></div>
     
-</body>
+
+     <script src="./ultra-cache-buster.js?v=c5d91a98&t=1759936723016" defer></script>
+  </body>
 </html>
