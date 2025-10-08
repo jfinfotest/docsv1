@@ -5,7 +5,7 @@
     "icon": "/assets/logo.png"
   },  
   "githubPages": {
-    "basePath": "/docs12/"
+    "basePath": "/docsv1/"
   },
   "theme": {
     "defaultTheme": "dark",
