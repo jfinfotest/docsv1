@@ -36,7 +36,7 @@ export const getBasePathAsync = async (): Promise<string> => {
   // Try to fetch the config.json directly for GitHub Pages basePath
   if (typeof window !== 'undefined') {
     try {
-      const response = await fetch('/config.json');
+      const response = await fetch('./config.json');
       if (response.ok) {
         const config = await response.json();
         return config.githubPages?.basePath || '';
