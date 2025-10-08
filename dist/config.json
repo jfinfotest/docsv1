@@ -4,6 +4,9 @@
     "subtitle": "Next-Gen Documentation - CI External Modules Test",
     "icon": "/assets/logo.png"
   },
+  "githubPages": {
+    "basePath": "/docsv1/"
+  },
   "theme": {
     "defaultTheme": "dark",
     "defaultAppTheme": "blue",

@@ -8,7 +8,6 @@
     "dev": "vite",
     "build": "vite build",
     "build:github": "node build-github.js",
-    "build:vercel": "node build-vercel.js",
     "preview": "vite preview"
   },
   "keywords": [
@@ -18,10 +17,6 @@
   ],
   "author": "",
   "license": "ISC",
-  "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
-  },
   "dependencies": {
     "@google/generative-ai": "^0.2.1",
     "@tabler/icons-react": "^3.34.1",

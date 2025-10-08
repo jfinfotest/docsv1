@@ -148,7 +148,7 @@ class ConfigService {
   private async fetchConfig(): Promise<Config> {
     try {
       const base = getBasePath();
-      const url = base ? `${base}/config.json` : './config.json';
+      const url = base ? `${base}/config.json` : 'config.json';
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to load config: ${response.status}`);
