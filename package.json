@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:github": "node build-github.js",
+    "build:vercel": "node build-vercel.js",
     "preview": "vite preview"
   },
   "keywords": [

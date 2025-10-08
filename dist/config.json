@@ -3,9 +3,6 @@
     "title": "FusionDocJF",
     "subtitle": "Next-Gen Documentation - CI External Modules Test",
     "icon": "/assets/logo.png"
-  },  
-  "githubPages": {
-    "basePath": "/docsv1/"
   },
   "theme": {
     "defaultTheme": "dark",
@@ -85,7 +82,10 @@
   },
   "version": {
     "defaultVersion": "v2.0",
-    "versions": ["v2.0", "v1.0"]
+    "versions": [
+      "v2.0",
+      "v1.0"
+    ]
   },
   "maintenanceMode": {
     "enabled": false,
