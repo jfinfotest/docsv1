@@ -10,7 +10,6 @@ import matter from 'gray-matter';
 import lunr from 'lunr';
 import type { NavItem, NavLink, NavSection, SearchDocument } from '../types';
 import { configService } from '../services/configService';
-import { getBasePath } from '../utils/pathUtils';
 import { useI18n } from './I18nContext';
 import { useVersion } from './VersionContext';
 
@@ -178,13 +177,7 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { lang, t } = useI18n();
     const { version } = useVersion();
 
-    const baseDocsPath = useMemo(() => {
-        if (!configs) return '';
-        let path = 'docs';
-        path = `${path}/${version}`;
-        path = `${path}/${lang}`;
-        return path;
-    }, [configs, lang, version]);
+
 
     // Cargar configuraciones al inicio
     useEffect(() => {
@@ -362,8 +355,8 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     useEffect(() => {
         const buildNavFromLocal = async () => {
              try {
-                const basePath = getBasePath();
-                const manifestPath = `${basePath}/docs/file-manifest.json`;
+                const docsPath = configService.getDocsPath();
+                const manifestPath = `${docsPath}/file-manifest.json`;
                 const manifestResponse = await fetch(manifestPath);
                 if (!manifestResponse.ok) {
                     throw new Error(t('manifestNotFound', manifestPath));
@@ -381,8 +374,8 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
                 const filePromises = relevantFullPaths.map(async (fullPath) => {
                     // Fetch the file using its full path relative to the /docs/ directory.
-                    const basePath = getBasePath();
-                    const response = await fetch(`${basePath}/docs/${fullPath}`);
+                    const docsPath = configService.getDocsPath();
+                    const response = await fetch(`${docsPath}/${fullPath}`);
                     if (!response.ok) {
                         console.warn(t('localFileLoadError', fullPath));
                         return null;
@@ -431,7 +424,7 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setSecondaryNavLinks([]);
 
         buildNavFromLocal();
-    }, [configs, baseDocsPath, lang, version, t]);
+    }, [configs, lang, version, t]);
     
     const search = (query: string): SearchDocument[] => {
         if (!searchData.index || !query) {
