@@ -1,11 +1,11 @@
 {
   "app": {
-    "title": "FusionDocJF123",
+    "title": "FusionDocJF",
     "subtitle": "Next-Gen Documentation - CI External Modules Test - Updated",
     "icon": "/assets/logo.png"
   },
   "githubPages": {
-    "basePath": "/docsv1/"
+    "basePath": "/docsv12/"
   },
   "theme": {
     "defaultTheme": "dark",
@@ -55,7 +55,7 @@
     "enabled": true
   },
   "announcementBanner": {
-    "enabled": true,
+    "enabled": false,
     "id": "v1-release",
     "content": "🎉 We've just launched our new feature! Check it out.",
     "link": {

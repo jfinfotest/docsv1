@@ -6,8 +6,7 @@
   
   console.log('🚀 ULTRA CACHE BUSTER iniciado');
   
-  // Configuración ultra-agresiva
-  const FORCE_UPDATE_INTERVAL = 5000; // Verificar cada 5 segundos
+  // Configuración: solo verificar una vez al cargar
   const MAX_CACHE_AGE = 0; // Sin cache
   
   // Función para detectar el basePath dinámicamente
@@ -37,6 +36,26 @@
   // Obtener el basePath una vez al inicio
   const BASE_PATH = getBasePath();
   console.log(`📁 ULTRA CACHE BUSTER usando basePath: ${BASE_PATH}`);
+  
+  // Función segura para codificar Base64 con soporte Unicode
+  function safeBase64Encode(str) {
+    try {
+      // Convertir a UTF-8 bytes y luego a Base64
+      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+        return String.fromCharCode('0x' + p1);
+      }));
+    } catch (error) {
+      // Fallback: usar un hash simple si btoa falla
+      console.warn('⚠️ Error en codificación Base64, usando hash simple:', error);
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convertir a 32bit integer
+      }
+      return Math.abs(hash).toString(16);
+    }
+  }
   
   // Función para limpiar TODO el cache del navegador
   async function nukeAllCaches() {
@@ -159,7 +178,7 @@
       
       if (response.ok) {
         const config = await response.json();
-        const currentConfigHash = btoa(JSON.stringify(config)).slice(0, 8);
+        const currentConfigHash = safeBase64Encode(JSON.stringify(config)).slice(0, 8);
         const storedConfigHash = localStorage.getItem('config-hash');
         
         if (storedConfigHash && storedConfigHash !== currentConfigHash) {
@@ -196,28 +215,9 @@
   async function initialize() {
     console.log('🔧 Inicializando ULTRA CACHE BUSTER...');
     
-    // Verificación inicial
+    // Verificación única al cargar la página
+    console.log('🔍 Verificando actualizaciones al cargar...');
     await checkForUpdates();
-    
-    // Configurar verificación periódica
-    setInterval(async () => {
-      console.log('🔍 Verificando actualizaciones...');
-      await checkForUpdates();
-    }, FORCE_UPDATE_INTERVAL);
-    
-    // Verificar cuando la página se vuelve visible
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-        console.log('👁️ Página visible, verificando actualizaciones...');
-        setTimeout(checkForUpdates, 1000);
-      }
-    });
-    
-    // Verificar cuando hay conexión de red
-    window.addEventListener('online', () => {
-      console.log('🌐 Conexión restaurada, verificando actualizaciones...');
-      setTimeout(checkForUpdates, 2000);
-    });
     
     // Interceptar navegación para limpiar cache
     window.addEventListener('beforeunload', async () => {
@@ -226,7 +226,7 @@
     });
     
     console.log('✅ ULTRA CACHE BUSTER inicializado correctamente');
-    console.log(`   🔄 Verificando actualizaciones cada ${FORCE_UPDATE_INTERVAL/1000} segundos`);
+    console.log('   🔄 Verificación única al cargar la página completada');
   }
   
   // Inicializar cuando el DOM esté listo
