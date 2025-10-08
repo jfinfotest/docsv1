@@ -91,7 +91,7 @@ const Tooltip: React.FC<TooltipProps> = ({
   }, []);
 
   const getPositionClasses = () => {
-    const baseClasses = 'absolute z-50 px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-gray-700 rounded shadow-lg whitespace-nowrap pointer-events-none';
+    const baseClasses = 'absolute z-[99999] px-2 py-1 text-xs font-medium text-white bg-gray-900 dark:bg-gray-700 rounded shadow-lg whitespace-nowrap pointer-events-none';
     
     switch (actualPosition) {
       case 'top':

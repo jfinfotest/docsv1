@@ -107,7 +107,7 @@ const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 w-full min-w-[120px] tablet:min-w-[140px] laptop:min-w-[160px] max-w-[200px] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9999] animate-fade-in-down">
+        <div className="absolute top-full mt-2 w-full min-w-[120px] tablet:min-w-[140px] laptop:min-w-[160px] max-w-[200px] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 z-[9999] animate-fade-in-down">
           <ul
             ref={listRef}
             role="listbox"
