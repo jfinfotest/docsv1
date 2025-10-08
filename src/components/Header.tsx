@@ -255,10 +255,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, onAboutCl
                     </div>
 
                     {/* Divider before language and version dropdowns */}
-                    {(languages.length > 1) || (versions.length > 1) && <div className="hidden desktop:block w-px h-6 bg-primary-500/50 ml-2 mr-2 tablet:ml-3 tablet:mr-3"></div>}
+                    {(languages.length > 1) || (versions.length > 1) && <div className="hidden laptop:block w-px h-6 bg-primary-500/50 ml-3 mr-3"></div>}
 
-                    {/* Language and version dropdowns - positioned at the far right - only on desktop+ */}
-                    <div className="hidden desktop:flex items-center space-x-1 tablet:space-x-1.5">
+                    {/* Language and version dropdowns - positioned at the far right */}
+                    <div className="hidden laptop:flex items-center space-x-1.5">
                         {languages.length > 1 && (
                             <AccessibleDropdown
                                 Icon={TranslateIcon}
@@ -269,7 +269,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, onAboutCl
                                     navigate('/');
                                 }}
                                 ariaLabel={t('language')}
-                                className="w-auto min-w-[80px] tablet:min-w-[100px] laptop:min-w-[120px]"
                             />
                         )}
                         {versions.length > 1 && (
@@ -282,7 +281,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, onAboutCl
                                     navigate('/');
                                 }}
                                 ariaLabel={t('version')}
-                                className="w-auto min-w-[70px] tablet:min-w-[90px] laptop:min-w-[110px]"
                             />
                         )}
                     </div>
@@ -391,48 +389,44 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick, onSettingsClick, onAboutCl
                                     <InfoCircleIcon className="w-4 h-4 tablet:w-5 tablet:h-5" />
                                     <span>{t('about')}</span>
                                 </button>
-                            </div>
-                            
-                            {/* Language and version dropdowns for mobile and tablet */}
-                            {((languages.length > 1) || (versions.length > 1)) && (
-                                <>
-                                    <div className="w-full border-t border-primary-600 my-3"></div>
-                                    <div className="flex flex-wrap gap-2 w-full">
-                                        {languages.length > 1 && (
-                                            <div className="flex-1 min-w-0">
-                                                <AccessibleDropdown
-                                                    Icon={TranslateIcon}
-                                                    options={languages.map(l => ({ value: l.code, label: l.name }))}
-                                                    value={lang}
-                                                    onChange={(newLang) => {
-                                                        setLang(newLang);
-                                                        navigate('/');
-                                                        setShowMobileMenu(false);
-                                                    }}
-                                                    ariaLabel={t('language')}
-                                                />
-                                            </div>
-                                        )}
-                                        {versions.length > 1 && (
-                                            <div className="flex-1 min-w-0">
-                                                <AccessibleDropdown
-                                                    Icon={VersionsIcon}
-                                                    options={versions.map(v => ({ value: v, label: v }))}
-                                                    value={version}
-                                                    onChange={(newVersion) => {
-                                                        setVersion(newVersion);
-                                                        navigate('/');
-                                                        setShowMobileMenu(false);
-                                                    }}
-                                                    ariaLabel={t('version')}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                </>
-                            )}
+                                
 
+                            </div>
                         </div>
+                        
+                        {/* Language and version dropdowns for mobile/tablet */}
+                        {(languages.length > 1) || (versions.length > 1) && (
+                            <div className="laptop:hidden flex flex-wrap gap-2 w-full">
+                                {languages.length > 1 && (
+                                    <div className="flex-1 min-w-0">
+                                        <AccessibleDropdown
+                                            Icon={TranslateIcon}
+                                            options={languages.map(l => ({ value: l.code, label: l.name }))}
+                                            value={lang}
+                                            onChange={(newLang) => {
+                                                setLang(newLang);
+                                                navigate('/');
+                                            }}
+                                            ariaLabel={t('language')}
+                                        />
+                                    </div>
+                                )}
+                                {versions.length > 1 && (
+                                    <div className="flex-1 min-w-0">
+                                        <AccessibleDropdown
+                                            Icon={VersionsIcon}
+                                            options={versions.map(v => ({ value: v, label: v }))}
+                                            value={version}
+                                            onChange={(newVersion) => {
+                                                setVersion(newVersion);
+                                                navigate('/');
+                                            }}
+                                            ariaLabel={t('version')}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         </div>
                 </div>
             )}

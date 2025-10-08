@@ -379,8 +379,8 @@ npm run dev
 
 2. **Construcción para producción**:
 ```bash
-npm run build:github
-# El build se genera en la carpeta dist/ con optimizaciones para GitHub Pages
+npm run build
+# El build se genera en la carpeta dist/
 ```
 
 3. **Servidor de producción**:
@@ -398,8 +398,8 @@ npm start
 npm run dev             # Servidor de desarrollo (puerto 5173)
 
 # Construcción
-npm run build:github    # Build para GitHub Pages con PWA ultra-agresivo
-npm run build:update    # Build y actualización de archivos específicos
+npm run build           # Build para producción
+npm run build:only      # Build sin tareas adicionales
 
 # Preview
 npm run preview         # Preview del build con Vite
@@ -414,8 +414,8 @@ npm run update-manifest # Actualiza manualmente el manifest de archivos
 - `dev`: Inicia el servidor de desarrollo de Vite en puerto 5173
 
 **Scripts de Build:**
-- `build:github`: Genera build para GitHub Pages con PWA ultra-agresivo
-- `build:update`: Build y actualización de archivos específicos
+- `build`: Genera build para producción
+- `build:only`: Genera build sin tareas adicionales
 
 **Scripts de Preview:**
 - `preview`: Preview del build usando Vite
@@ -424,7 +424,7 @@ npm run update-manifest # Actualiza manualmente el manifest de archivos
 - `update-manifest`: Actualiza manualmente el manifiesto de archivos
 
 **Servidor de Producción:**
-Después de ejecutar `npm run build:github`, se crea una carpeta `dist/` con un servidor de producción independiente:
+Después de ejecutar `npm run build`, se crea una carpeta `dist/` con un servidor de producción independiente:
 
 ```bash
 cd dist
@@ -440,11 +440,11 @@ npm run dev    # Iniciar servidor en modo desarrollo con auto-recarga
 npm run dev
 
 # Para construir y probar producción
-npm run build:github
+npm run build
 cd dist && npm install && npm start
 
 # Para preview rápido con Vite
-npm run build:github
+npm run build
 npm run preview
 ```
 
@@ -595,7 +595,7 @@ export const FONTS = [
 ### Netlify
 ```bash
 # Construir para producción
-npm run build:github
+npm run build
 
 # Subir carpeta dist/ a Netlify
 # O conectar repositorio para despliegue automático
@@ -613,7 +613,7 @@ vercel --prod
 ### Servidor Propio
 ```bash
 # Construir aplicación
-npm run build:github
+npm run build
 
 # Servir archivos estáticos desde dist/
 # Usar nginx, Apache, o cualquier servidor web
@@ -675,7 +675,7 @@ npm run lint
 npx tsc --noEmit
 
 # Análisis de bundle
-npm run build:github && npx vite-bundle-analyzer
+npm run build && npx vite-bundle-analyzer
 ```
 
 ### Mejores Prácticas
