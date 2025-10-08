@@ -2,7 +2,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ command, mode }) => {
+  // Usar variable de entorno para el base path, por defecto rutas relativas
+  const base = process.env.VITE_BASE_PATH || './';
+  
+  return {
   plugins: [
     react(),
     VitePWA({
@@ -90,7 +94,7 @@ export default defineConfig({
       }
     })
   ],
-  base: './',
+  base,
   server: {
     port: 5173,
     host: 'localhost'
@@ -98,4 +102,4 @@ export default defineConfig({
   build: {
     outDir: 'dist'
   }
-});
+}});
