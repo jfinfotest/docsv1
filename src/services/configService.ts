@@ -101,6 +101,10 @@ export interface UITextTranslations {
   [key: string]: string | ((...params: any[]) => string);
 }
 
+export interface GitHubPagesConfig {
+  basePath: string;
+}
+
 export interface Config {
   app: AppConfig;
   theme: ThemeConfig;
@@ -114,6 +118,7 @@ export interface Config {
   version: VersionConfig;
   maintenanceMode: MaintenanceModeConfig;
   uiText: UITextConfig;
+  githubPages?: GitHubPagesConfig;
 }
 
 // --- CONFIG SERVICE ---
@@ -152,6 +157,11 @@ class ConfigService {
       
       // Process dynamic values like {year}
       this.processDynamicValues(config);
+      
+      // Make config globally available for path utilities
+      if (typeof window !== 'undefined') {
+        (window as any).__APP_CONFIG__ = config;
+      }
       
       return config;
     } catch (error) {
@@ -283,6 +293,20 @@ class ConfigService {
   }
 
   /**
+   * Get GitHub Pages configuration
+   */
+  getGitHubPagesConfig(): GitHubPagesConfig | null {
+    return this.config?.githubPages || null;
+  }
+
+  /**
+   * Get the base path for GitHub Pages deployment
+   */
+  getBasePath(): string {
+    return this.config?.githubPages?.basePath || '';
+  }
+
+  /**
    * Utility functions
    */
   getDocsPath(): string {
@@ -308,6 +332,8 @@ export const getI18nConfig = () => configService.getI18nConfig();
 export const getVersionConfig = () => configService.getVersionConfig();
 export const getMaintenanceModeConfig = () => configService.getMaintenanceModeConfig();
 export const getUITextConfig = () => configService.getUITextConfig();
+export const getGitHubPagesConfig = () => configService.getGitHubPagesConfig();
+export const getConfigBasePath = () => configService.getBasePath();
 
 // Utility functions
 export const getDocsPath = () => configService.getDocsPath();

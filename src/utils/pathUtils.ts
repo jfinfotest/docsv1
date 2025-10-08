@@ -8,6 +8,19 @@ export const getBasePath = (): string => {
     return config.basePath || '';
   }
   
+  // Try to read from the loaded config.json (for GitHub Pages)
+  if (typeof window !== 'undefined') {
+    try {
+      // Fallback: try to read from a global config if available
+      if ((window as any).__APP_CONFIG__) {
+        const config = (window as any).__APP_CONFIG__;
+        return config.githubPages?.basePath || '';
+      }
+    } catch (error) {
+      console.warn('Could not read basePath from config:', error);
+    }
+  }
+  
   // For local development
   return '';
 };
@@ -18,6 +31,19 @@ export const getBasePathAsync = async (): Promise<string> => {
   if (typeof window !== 'undefined' && (window as any).APP_CONFIG) {
     const config = (window as any).APP_CONFIG;
     return config.basePath || '';
+  }
+  
+  // Try to fetch the config.json directly for GitHub Pages basePath
+  if (typeof window !== 'undefined') {
+    try {
+      const response = await fetch('/config.json');
+      if (response.ok) {
+        const config = await response.json();
+        return config.githubPages?.basePath || '';
+      }
+    } catch (error) {
+      console.warn('Could not fetch config.json for basePath:', error);
+    }
   }
   
   // For local development
