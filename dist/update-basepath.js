@@ -74,6 +74,12 @@ function updateServiceWorker(basePath) {
   }
 }
 
+// Función para normalizar basePath
+function normalizeBasePath(basePath) {
+  if (!basePath || basePath === '/') return '/';
+  return basePath.endsWith('/') ? basePath : `${basePath}/`;
+}
+
 // Función para actualizar index.html con el basePath correcto
 function updateIndexHtml(basePath) {
   const indexPath = path.join(__dirname, 'index.html');
@@ -85,33 +91,129 @@ function updateIndexHtml(basePath) {
 
   try {
     let htmlContent = fs.readFileSync(indexPath, 'utf8');
+    const normalizedBasePath = normalizeBasePath(basePath);
     
-    // Actualizar las rutas de assets si es necesario
-    if (basePath && basePath !== '/') {
-      // Asegurar que el basePath termine con /
-      const normalizedBasePath = basePath.endsWith('/') ? basePath : `${basePath}/`;
-      
-      // Actualizar meta tags que puedan necesitar el basePath
-      htmlContent = htmlContent.replace(
-        /<meta name="base-url" content="[^"]*">/g,
-        `<meta name="base-url" content="${normalizedBasePath}">`
-      );
-      
-      // Si no existe el meta tag, agregarlo después del primer meta tag
-      if (!htmlContent.includes('<meta name="base-url"')) {
-        htmlContent = htmlContent.replace(
-          /<meta([^>]*)>/,
-          `<meta$1>
-    <meta name="base-url" content="${normalizedBasePath}">`
-        );
-      }
+    // Update or add base-url meta tag
+    const metaTagRegex = /<meta\s+name="base-url"\s+content="[^"]*"\s*\/?>/;
+    const newMetaTag = `<meta name="base-url" content="${normalizedBasePath}">`;
+    
+    if (metaTagRegex.test(htmlContent)) {
+      htmlContent = htmlContent.replace(metaTagRegex, newMetaTag);
+    } else {
+      // Insert after the first meta tag
+      const firstMetaRegex = /(<meta[^>]*>)/;
+      htmlContent = htmlContent.replace(firstMetaRegex, `$1\n    ${newMetaTag}`);
+    }
+    
+    // Update all hardcoded basePath references in assets
+    // Pattern to match: src="/any-basepath/assets/..." or href="/any-basepath/assets/..." or href="/any-basepath/manifest.webmanifest"
+    const assetPathRegex = /((?:src|href)=")\/[^\/]*\/((?:assets\/[^"]*|manifest\.webmanifest[^"]*|registerSW\.js[^"]*))"/g;
+    htmlContent = htmlContent.replace(assetPathRegex, `$1${normalizedBasePath}$2"`);
+    
+    // Add basepath-init.js script if not present
+    const initScriptTag = '<script src="basepath-init.js" defer></script>';
+    
+    if (!htmlContent.includes('basepath-init.js')) {
+      // Insert before closing </head> tag
+      htmlContent = htmlContent.replace('</head>', `    ${initScriptTag}\n  </head>`);
     }
     
     fs.writeFileSync(indexPath, htmlContent);
-    console.log(`✅ index.html updated with basePath: ${basePath || './'}`);
+    console.log(`✅ index.html updated with basePath: ${normalizedBasePath}`);
+    console.log(`✅ Asset paths and auto-initialization script updated in index.html`);
   } catch (error) {
     console.error('❌ Error updating index.html:', error.message);
   }
+}
+
+// Función para actualizar registerSW.js
+function updateRegisterSW(basePath) {
+  const registerSWPath = path.join(__dirname, 'registerSW.js');
+  
+  if (!fs.existsSync(registerSWPath)) {
+    console.warn('⚠️ registerSW.js not found');
+    return;
+  }
+
+  try {
+    let swContent = fs.readFileSync(registerSWPath, 'utf8');
+    const normalizedBasePath = normalizeBasePath(basePath);
+    
+    // Update hardcoded paths in registerSW.js
+    swContent = swContent.replace(/\/[^\/]*\/sw\.js/g, `${normalizedBasePath}sw.js`);
+    
+    fs.writeFileSync(registerSWPath, swContent);
+    console.log(`✅ registerSW.js updated with basePath: ${normalizedBasePath}`);
+  } catch (error) {
+    console.error('❌ Error updating registerSW.js:', error.message);
+  }
+}
+
+// Función para crear basepath-init.js
+function createBasepathInit(basePath) {
+  const normalizedBasePath = normalizeBasePath(basePath);
+  
+  const autoInitContent = `// Auto-initialization script for dynamic basePath detection
+// This script runs automatically when the page loads
+
+(function() {
+  'use strict';
+  
+  function getBasePath() {
+    // Priority 1: Check meta tag
+    const metaTag = document.querySelector('meta[name="base-url"]');
+    if (metaTag && metaTag.content) {
+      return metaTag.content;
+    }
+    
+    // Priority 2: Check window.APP_CONFIG
+    if (window.APP_CONFIG && window.APP_CONFIG.basePath) {
+      return window.APP_CONFIG.basePath;
+    }
+    
+    // Priority 3: Try to load config.json from possible basePath
+    const currentPath = window.location.pathname;
+    const possibleBasePath = currentPath.substring(0, currentPath.lastIndexOf('/') + 1);
+    
+    // For GitHub Pages, try to detect from URL structure
+    if (window.location.hostname.includes('github.io')) {
+      const pathParts = currentPath.split('/').filter(part => part);
+      if (pathParts.length > 0) {
+        return '/' + pathParts[0] + '/';
+      }
+    }
+    
+    return possibleBasePath || '/';
+  }
+  
+  function updateBasePath() {
+    const detectedBasePath = getBasePath();
+    
+    // Update window.APP_CONFIG
+    if (!window.APP_CONFIG) {
+      window.APP_CONFIG = {};
+    }
+    window.APP_CONFIG.basePath = detectedBasePath;
+    
+    // Dispatch custom event for other scripts
+    window.dispatchEvent(new CustomEvent('basepath-updated', {
+      detail: { basePath: detectedBasePath }
+    }));
+    
+    console.log('🔧 BasePath auto-detected:', detectedBasePath);
+  }
+  
+  // Initialize immediately
+  updateBasePath();
+  
+  // Check for changes periodically (for dynamic updates)
+  setInterval(updateBasePath, 5000);
+  
+})();`;
+
+  const autoInitPath = path.join(__dirname, 'basepath-init.js');
+  fs.writeFileSync(autoInitPath, autoInitContent);
+  console.log('✅ Auto-init script created: basepath-init.js');
 }
 
 // Función principal
@@ -127,16 +229,21 @@ function main() {
 
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     const basePath = config.githubPages?.basePath || '';
+    const normalizedBasePath = normalizeBasePath(basePath);
 
-    console.log(`📁 Using basePath: ${basePath || '(root)'}`);
+    console.log(`📁 Raw basePath from config: ${basePath || '(root)'}`);
+    console.log(`📁 Normalized basePath: ${normalizedBasePath}`);
 
     // Actualizar todos los archivos
     updateManifest(basePath);
     updateServiceWorker(basePath);
     updateIndexHtml(basePath);
+    updateRegisterSW(basePath);
+    createBasepathInit(basePath);
 
     console.log('✅ BasePath configuration updated successfully!');
-    console.log('💡 Remember to run force-pwa-update.js to apply PWA changes');
+    console.log(`🚀 All files updated with basePath: ${normalizedBasePath}`);
+    console.log('💡 Auto-initialization script created for dynamic updates');
     
   } catch (error) {
     console.error('❌ Error updating basePath configuration:', error.message);
@@ -145,8 +252,8 @@ function main() {
 }
 
 // Ejecutar si es llamado directamente
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '/'))) {
   main();
 }
 
-export { updateManifest, updateServiceWorker, updateIndexHtml };
+export { updateManifest, updateServiceWorker, updateIndexHtml, updateRegisterSW, createBasepathInit };
