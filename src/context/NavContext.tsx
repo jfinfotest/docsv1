@@ -363,7 +363,7 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         const buildNavFromLocal = async () => {
              try {
                 const basePath = getBasePath();
-                const manifestPath = `${basePath}/docs/file-manifest.json`;
+                const manifestPath = basePath ? `${basePath}/docs/file-manifest.json` : './docs/file-manifest.json';
                 const manifestResponse = await fetch(manifestPath);
                 if (!manifestResponse.ok) {
                     throw new Error(t('manifestNotFound', manifestPath));
@@ -382,7 +382,7 @@ export const NavProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 const filePromises = relevantFullPaths.map(async (fullPath) => {
                     // Fetch the file using its full path relative to the /docs/ directory.
                     const basePath = getBasePath();
-                    const response = await fetch(`${basePath}/docs/${fullPath}`);
+                    const response = await fetch(basePath ? `${basePath}/docs/${fullPath}` : `./docs/${fullPath}`);
                     if (!response.ok) {
                         console.warn(t('localFileLoadError', fullPath));
                         return null;

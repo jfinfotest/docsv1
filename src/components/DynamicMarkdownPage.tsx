@@ -127,7 +127,7 @@ const DynamicMarkdownPage: React.FC<DynamicMarkdownPageProps> = ({ path }) => {
             try {
                 let text = '';
                 const basePath = getBasePath();
-                const fullUrl = `${basePath}/${baseDocsPath}/${path}`;
+                const fullUrl = basePath ? `${basePath}/${baseDocsPath}/${path}` : `./${baseDocsPath}/${path}`;
                 const response = await fetch(fullUrl);
                 if (!response.ok) {
                     throw new Error(t('localFileNotFound', path, response.statusText));
