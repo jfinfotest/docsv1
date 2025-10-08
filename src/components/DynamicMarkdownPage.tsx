@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import matter from 'gray-matter';
 import { configService } from '../services/configService';
+import { getBasePath } from '../utils/pathUtils';
 import MarkdownPage from './MarkdownPage';
 import RightSidebar from './RightSidebar';
 import { useScrollableContainer } from '../context/ScrollContext';
@@ -102,7 +103,13 @@ const DynamicMarkdownPage: React.FC<DynamicMarkdownPageProps> = ({ path }) => {
         loadConfigs();
     }, []);
 
-
+    const baseDocsPath = useMemo(() => {
+        if (!configs) return '';
+        let basePath = 'docs';
+        basePath = `${basePath}/${version}`;
+        basePath = `${basePath}/${lang}`;
+        return basePath;
+    }, [configs, lang, version]);
 
 
     useEffect(() => {
@@ -119,8 +126,8 @@ const DynamicMarkdownPage: React.FC<DynamicMarkdownPageProps> = ({ path }) => {
 
             try {
                 let text = '';
-                const docsPath = configService.getDocsPath();
-                const fullUrl = `${docsPath}/${version}/${lang}/${path}`;
+                const basePath = getBasePath();
+                const fullUrl = `${basePath}/${baseDocsPath}/${path}`;
                 const response = await fetch(fullUrl);
                 if (!response.ok) {
                     throw new Error(t('localFileNotFound', path, response.statusText));
@@ -149,7 +156,7 @@ const DynamicMarkdownPage: React.FC<DynamicMarkdownPageProps> = ({ path }) => {
         };
 
         fetchContent();
-    }, [configs, path, scrollableContainerRef, version, lang, t]);
+    }, [configs, path, scrollableContainerRef, baseDocsPath, t]);
 
     useEffect(() => {
         if (!content || !contentRef.current) return;

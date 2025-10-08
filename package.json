@@ -8,6 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:github": "node build-github.js",
+    "build:update": "node public/build-and-update.js",
+    "pwa:update": "node public/force-pwa-update.js",
     "preview": "vite preview"
   },
   "keywords": [

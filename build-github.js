@@ -45,6 +45,42 @@ if (fs.existsSync(distConfigPath)) {
   fs.writeFileSync(distConfigPath, JSON.stringify(distConfig, null, 2));
 }
 
+// Crear package.json en dist con scripts para actualización
+console.log('📦 Creating package.json in dist...');
+const distPackageJson = {
+  "name": "fusiondoc-dist",
+  "version": "1.0.0",
+  "description": "Distribution package for FusionDoc with update scripts",
+  "scripts": {
+    "update-manifest": `node "${path.join(__dirname, 'public', 'update-file-manifest.js')}"`,
+    "force-pwa-update": `node "${path.join(__dirname, 'public', 'force-pwa-update.js')}"`,
+    "update-all": "npm run update-manifest && npm run force-pwa-update"
+  },
+  "type": "module"
+};
+
+const distPackageJsonPath = path.join(__dirname, 'dist', 'package.json');
+fs.writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
+
+// Copiar scripts necesarios a dist
+console.log('📋 Copying update scripts to dist...');
+const scriptsTooCopy = [
+  'update-file-manifest.js',
+  'force-pwa-update.js'
+];
+
+scriptsTooCopy.forEach(script => {
+  const sourcePath = path.join(__dirname, 'public', script);
+  const destPath = path.join(__dirname, 'dist', script);
+  
+  if (fs.existsSync(sourcePath)) {
+    fs.copyFileSync(sourcePath, destPath);
+    console.log(`  ✓ Copied ${script}`);
+  } else {
+    console.log(`  ⚠️ Warning: ${script} not found in public directory`);
+  }
+});
+
 // Actualizar file-manifest.json si existe
 const manifestPath = path.join(__dirname, 'dist', 'docs', 'file-manifest.json');
 if (fs.existsSync(manifestPath)) {
@@ -55,3 +91,8 @@ if (fs.existsSync(manifestPath)) {
 console.log('✅ GitHub Pages build completed successfully!');
 console.log(`📦 Files are ready in the 'dist' directory`);
 console.log(`🌐 Base path configured: ${githubBasePath}`);
+console.log('📋 Package.json created in dist with update scripts');
+console.log('🔄 Available scripts in dist:');
+console.log('  - npm run update-manifest');
+console.log('  - npm run force-pwa-update');
+console.log('  - npm run update-all');

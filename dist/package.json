@@ -1,0 +1,11 @@
+{
+  "name": "fusiondoc-dist",
+  "version": "1.0.0",
+  "description": "Distribution package for FusionDoc with update scripts",
+  "scripts": {
+    "update-manifest": "node \"C:\\Users\\jhonf\\Desktop\\Info\\2025\\ProyectosActuales\\docsv13\\public\\update-file-manifest.js\"",
+    "force-pwa-update": "node \"C:\\Users\\jhonf\\Desktop\\Info\\2025\\ProyectosActuales\\docsv13\\public\\force-pwa-update.js\"",
+    "update-all": "npm run update-manifest && npm run force-pwa-update"
+  },
+  "type": "module"
+}

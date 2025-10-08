@@ -147,8 +147,8 @@ class ConfigService {
 
   private async fetchConfig(): Promise<Config> {
     try {
-      // For development, always use relative path
-      const url = 'config.json';
+      const base = getBasePath();
+      const url = base ? `${base}/config.json` : 'config.json';
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Failed to load config: ${response.status}`);
@@ -310,12 +310,6 @@ class ConfigService {
    * Utility functions
    */
   getDocsPath(): string {
-    // In development mode, always use /docs without basePath
-    if (import.meta.env.DEV) {
-      return '/docs';
-    }
-    
-    // In production, use basePath if configured
     const basePath = this.getBasePath();
     return basePath ? `${basePath}/docs` : '/docs';
   }
@@ -344,3 +338,4 @@ export const getConfigBasePath = () => configService.getBasePath();
 
 // Utility functions
 export const getDocsPath = () => configService.getDocsPath();
+import { getBasePath } from '../utils/pathUtils';
