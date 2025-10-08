@@ -7,15 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:only": "vite build",
-    "preview": "vite preview",
-    "update-manifest": "node public/update-file-manifest.js",
-    "deploy:static": "node scripts/deploy.js static",
-    "deploy:server": "node scripts/deploy.js server",
-    "deploy:docker": "node scripts/deploy.js docker",
-    "deploy:zip": "node scripts/deploy.js zip",
-    "deploy:github-pages": "node scripts/deploy-github-pages.js",
-    "start:production": "node server.js"
+    "preview": "vite preview"
   },
   "keywords": [
     "documentation",

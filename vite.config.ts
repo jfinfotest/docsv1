@@ -13,9 +13,7 @@ export default defineConfig({
       workbox: {
         clientsClaim: true,
         skipWaiting: true,
-        // Excluir config.json del precaching para permitir actualizaciones dinámicas
         globIgnores: ['**/config.json'],
-        // Configurar estrategia de runtime caching para config.json
         runtimeCaching: [
           {
             urlPattern: /\/config\.json$/,
@@ -92,42 +90,12 @@ export default defineConfig({
       }
     })
   ],
-  // Generar rutas relativas en el build
   base: './',
   server: {
     port: 5173,
     host: 'localhost'
   },
   build: {
-    outDir: 'dist',
-    // Optimizaciones para producción
-    minify: 'terser',
-    sourcemap: false, // No generar source maps para ocultar código
-    rollupOptions: {
-      output: {
-        // Ofuscar nombres de archivos
-        entryFileNames: 'assets/[name]-[hash].js',
-        chunkFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-        // Separar dependencias grandes en chunks
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          markdown: ['react-markdown', 'remark-gfm', 'rehype-katex'],
-          charts: ['chart.js', 'mermaid']
-        }
-      }
-    },
-    // Configuraciones de seguridad
-    terserOptions: {
-      compress: {
-        drop_console: true, // Eliminar console.log en producción
-        drop_debugger: true
-      },
-      mangle: true, // Ofuscar nombres de variables
-      format: {
-        comments: false // Eliminar comentarios
-      }
-    }
+    outDir: 'dist'
   }
 });
