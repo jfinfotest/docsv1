@@ -2,7 +2,7 @@
   "name": "FusionDoc",
   "short_name": "FusionDoc",
   "description": "A modern, responsive static documentation site.",
-  "start_url": "./index.html?v=23472853&t=1759943548383",
+  "start_url": "./index.html?v=03c4c9c0&t=1759944000188",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
@@ -10,54 +10,54 @@
   "scope": "./",
   "icons": [
     {
-      "src": "pwa_icons/android/android-launchericon-48-48.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-48-48.png?v=03c4c9c0&t=1759944000188",
       "sizes": "48x48",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/android/android-launchericon-72-72.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-72-72.png?v=03c4c9c0&t=1759944000188",
       "sizes": "72x72",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/android/android-launchericon-96-96.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-96-96.png?v=03c4c9c0&t=1759944000188",
       "sizes": "96x96",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/android/android-launchericon-144-144.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-144-144.png?v=03c4c9c0&t=1759944000188",
       "sizes": "144x144",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/android/android-launchericon-192-192.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-192-192.png?v=03c4c9c0&t=1759944000188",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/android/android-launchericon-512-512.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/android/android-launchericon-512-512.png?v=03c4c9c0&t=1759944000188",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "pwa_icons/ios/180.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/ios/180.png?v=03c4c9c0&t=1759944000188",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "apple-touch-icon"
     },
     {
-      "src": "pwa_icons/ios/152.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/ios/152.png?v=03c4c9c0&t=1759944000188",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "apple-touch-icon"
     },
     {
-      "src": "pwa_icons/ios/120.png?v=23472853&t=1759943548383",
+      "src": "pwa_icons/ios/120.png?v=03c4c9c0&t=1759944000188",
       "sizes": "120x120",
       "type": "image/png",
       "purpose": "apple-touch-icon"
     }
   ],
-  "version": "23472853",
-  "updated": "2025-10-08T17:12:28.383Z"
+  "version": "03c4c9c0",
+  "updated": "2025-10-08T17:20:00.188Z"
 }

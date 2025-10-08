@@ -2,6 +2,17 @@
 
 // Get the correct base path for assets based on the current environment (synchronous version for compatibility)
 export const getBasePath = (): string => {
+  // First, try to read from meta tag (set by update-basepath.js)
+  if (typeof window !== 'undefined') {
+    const metaTag = document.querySelector('meta[name="base-url"]');
+    if (metaTag) {
+      const basePath = metaTag.getAttribute('content');
+      if (basePath && basePath !== './') {
+        return basePath;
+      }
+    }
+  }
+
   // Check if there's a post-build configuration available
   if (typeof window !== 'undefined' && (window as any).APP_CONFIG) {
     const config = (window as any).APP_CONFIG;
@@ -27,6 +38,17 @@ export const getBasePath = (): string => {
 
 // Async version that loads from configuration
 export const getBasePathAsync = async (): Promise<string> => {
+  // First, try to read from meta tag (set by update-basepath.js)
+  if (typeof window !== 'undefined') {
+    const metaTag = document.querySelector('meta[name="base-url"]');
+    if (metaTag) {
+      const basePath = metaTag.getAttribute('content');
+      if (basePath && basePath !== './') {
+        return basePath;
+      }
+    }
+  }
+
   // Check if there's a post-build configuration available
   if (typeof window !== 'undefined' && (window as any).APP_CONFIG) {
     const config = (window as any).APP_CONFIG;
@@ -36,7 +58,11 @@ export const getBasePathAsync = async (): Promise<string> => {
   // Try to fetch the config.json directly for GitHub Pages basePath
   if (typeof window !== 'undefined') {
     try {
-      const response = await fetch('/config.json');
+      // Try with current basePath first
+      const currentBasePath = getBasePath();
+      const configUrl = currentBasePath ? `${currentBasePath}config.json` : '/config.json';
+      
+      const response = await fetch(configUrl);
       if (response.ok) {
         const config = await response.json();
         return config.githubPages?.basePath || '';

@@ -52,9 +52,10 @@ const distPackageJson = {
   "version": "1.0.0",
   "description": "Distribution package for FusionDoc with update scripts",
   "scripts": {
-    "update-manifest": `node "${path.join(__dirname, 'public', 'update-file-manifest.js')}"`,
-    "force-pwa-update": `node "${path.join(__dirname, 'public', 'force-pwa-update.js')}"`,
-    "update-all": "npm run update-manifest && npm run force-pwa-update"
+    "update-manifest": "node update-file-manifest.js",
+    "force-pwa-update": "node force-pwa-update.js",
+    "update-basepath": "node update-basepath.js",
+    "update-all": "npm run update-manifest && npm run update-basepath && npm run force-pwa-update"
   },
   "type": "module"
 };
@@ -62,14 +63,15 @@ const distPackageJson = {
 const distPackageJsonPath = path.join(__dirname, 'dist', 'package.json');
 fs.writeFileSync(distPackageJsonPath, JSON.stringify(distPackageJson, null, 2));
 
-// Copiar scripts necesarios a dist (incluyendo ultra-cache-buster)
+// Copiar scripts necesarios a dist (incluyendo ultra-cache-buster y update-basepath)
 console.log('📋 Copying update scripts to dist...');
 const scriptsTooCopy = [
   'update-file-manifest.js',
   'force-pwa-update.js',
   'ultra-cache-buster.js',
   'build-and-update.js',
-  'deploy-with-pwa-update.js'
+  'deploy-with-pwa-update.js',
+  'update-basepath.js'
 ];
 
 scriptsTooCopy.forEach(script => {
@@ -91,6 +93,16 @@ if (fs.existsSync(manifestPath)) {
   execSync('node dist/update-file-manifest.js', { stdio: 'inherit' });
 }
 
+// Ejecutar automáticamente la actualización del basePath
+console.log('🔧 Applying basePath configuration...');
+try {
+  execSync('node dist/update-basepath.js', { stdio: 'inherit' });
+  console.log('✅ BasePath configuration applied successfully!');
+} catch (error) {
+  console.error('❌ Error applying basePath configuration:', error.message);
+  console.log('⚠️ Build will continue but basePath configuration may not be optimal');
+}
+
 // Ejecutar automáticamente la actualización PWA ultra-agresiva
 console.log('🚀 Applying ultra-aggressive PWA cache busting...');
 try {
@@ -108,6 +120,7 @@ console.log('📋 Package.json created in dist with update scripts');
 console.log('🚀 Ultra-aggressive cache busting automatically applied');
 console.log('🔄 Available scripts in dist:');
 console.log('  - npm run update-manifest');
+console.log('  - npm run update-basepath');
 console.log('  - npm run force-pwa-update');
 console.log('  - npm run update-all');
 console.log('');
@@ -117,3 +130,5 @@ console.log('  ✓ Automatic PWA version management');
 console.log('  ✓ Service Worker forced updates');
 console.log('  ✓ Complete browser cache invalidation');
 console.log('  ✓ Real-time config.json change detection');
+console.log('  ✓ Dynamic basePath configuration');
+console.log('  ✓ GitHub Pages basePath auto-update');
