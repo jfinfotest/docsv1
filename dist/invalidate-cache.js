@@ -1,11 +1,11 @@
-// Script de Invalidación de Cache - Versión: fd746dfa
+// Script de Invalidación de Cache - Versión: be28953b
 // Este script fuerza la invalidación de cache para actualizaciones de PWA
 
 (function() {
   'use strict';
   
-  const version = 'fd746dfa';
-  const timestamp = 1759935672750;
+  const version = 'be28953b';
+  const timestamp = 1759935961710;
   
   console.log('Invalidación de Cache: Iniciando para versión', version);
   

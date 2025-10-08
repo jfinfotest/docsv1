@@ -1,11 +1,11 @@
-// PWA Registration - Version: fd746dfa - 2025-10-08T15:01:12.734Z
+// PWA Registration - Version: be28953b - 2025-10-08T15:06:01.694Z
 if('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/docsv1/sw.js?v=fd746dfa&t=1759935672734', { 
+    navigator.serviceWorker.register('/docsv1/sw.js?v=be28953b&t=1759935961694', { 
       scope: '/docsv1/',
       updateViaCache: 'none'
     }).then(registration => {
-      console.log('SW: Registrado con versión fd746dfa');
+      console.log('SW: Registrado con versión be28953b');
       
       // Forzar verificación de actualización
       registration.addEventListener('updatefound', () => {
@@ -33,7 +33,7 @@ if('serviceWorker' in navigator) {
 // Forzar limpieza de cache en carga
 if ('caches' in window) {
   caches.keys().then(cacheNames => {
-    const oldCaches = cacheNames.filter(name => !name.includes('fd746dfa'));
+    const oldCaches = cacheNames.filter(name => !name.includes('be28953b'));
     return Promise.all(oldCaches.map(name => caches.delete(name)));
   });
 }

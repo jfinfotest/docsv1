@@ -1,4 +1,4 @@
-// PWA Version: d9ebe5f4 - 2025-10-08T15:01:12.734Z - Timestamp: 1759935672734
+// PWA Version: f5e1bedd - 2025-10-08T15:06:01.694Z - Timestamp: 1759935961694
 
 // Estrategia de actualización forzada
 self.addEventListener('install', event => {
