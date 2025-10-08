@@ -96,23 +96,23 @@ const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({
         ref={buttonRef}
         onClick={() => setIsOpen((o) => !o)}
         onKeyDown={handleKeyDownButton}
-        className="flex items-center justify-start space-x-1 tablet:space-x-1.5 px-1.5 tablet:px-2.5 py-0.5 tablet:py-1.5 text-xs tablet:text-xs bg-primary-600 hover:bg-primary-500 border border-primary-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-colors duration-200 w-full"
+        className="flex items-center justify-start space-x-1 tablet:space-x-1.5 px-1.5 tablet:px-2 laptop:px-2.5 py-0.5 tablet:py-1 laptop:py-1.5 text-xs tablet:text-xs laptop:text-sm bg-primary-600 hover:bg-primary-500 border border-primary-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary-700 focus:ring-white transition-colors duration-200 w-full"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={ariaLabel}
       >
-        <Icon className="w-4 h-4 tablet:w-5 tablet:h-5 text-primary-200 flex-shrink-0" />
-        <span className="text-left truncate">{selectedOption.label}</span>
-        <ChevronDownIcon className={`w-3 h-3 tablet:w-4 tablet:h-4 text-primary-200 transition-transform duration-200 flex-shrink-0 ml-auto ${isOpen ? 'rotate-180' : ''}`} />
+        <Icon className="w-3 h-3 tablet:w-4 tablet:h-4 laptop:w-5 laptop:h-5 text-primary-200 flex-shrink-0" />
+        <span className="text-left truncate text-xs tablet:text-xs laptop:text-sm">{selectedOption.label}</span>
+        <ChevronDownIcon className={`w-3 h-3 tablet:w-3 tablet:h-3 laptop:w-4 laptop:h-4 text-primary-200 transition-transform duration-200 flex-shrink-0 ml-auto ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-3 w-full min-w-32 tablet:w-44 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9999] animate-fade-in-down">
+        <div className="absolute top-full mt-2 w-full min-w-[120px] tablet:min-w-[140px] laptop:min-w-[160px] max-w-[200px] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-[9999] animate-fade-in-down">
           <ul
             ref={listRef}
             role="listbox"
             aria-label={ariaLabel}
-            className="py-2 max-h-60 overflow-auto"
+            className="py-1 tablet:py-2 max-h-60 overflow-auto"
           >
             {options.map((option, index) => (
               <li key={option.value} className={index === 0 ? 'mt-1' : ''}>
@@ -126,7 +126,7 @@ const AccessibleDropdown: React.FC<AccessibleDropdownProps> = ({
                   }}
                   onKeyDown={(e) => handleKeyDownItem(e, index, option.value)}
                   tabIndex={index === activeIndex ? 0 : -1}
-                  className={`flex items-center justify-start w-full text-left px-4 tablet:px-5 py-3 tablet:py-3.5 text-sm tablet:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset hover:scale-[1.01] cursor-pointer min-h-[44px] tablet:min-h-[48px] ${
+                  className={`flex items-center justify-start w-full text-left px-3 tablet:px-4 laptop:px-5 py-2 tablet:py-2.5 laptop:py-3 text-xs tablet:text-sm laptop:text-base transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset hover:scale-[1.01] cursor-pointer min-h-[36px] tablet:min-h-[40px] laptop:min-h-[44px] ${
                     option.value === value
                       ? 'bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 font-medium'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-800 dark:hover:text-primary-200 hover:font-medium focus:bg-primary-50 dark:focus:bg-primary-900/30 focus:text-primary-800 dark:focus:text-primary-200'

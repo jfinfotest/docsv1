@@ -93,7 +93,7 @@ El script `force-pwa-update.js` realiza las siguientes acciones:
 ## 🐛 Solución de Problemas
 
 ### Error: "Directorio dist no encontrado"
-- **Solución**: Ejecuta primero `npm run build` o `npm run build:github`
+- **Solución**: Ejecuta primero `npm run build:github`
 
 ### Error: "Archivo no encontrado"
 - **Solución**: Verifica que el build se completó correctamente
