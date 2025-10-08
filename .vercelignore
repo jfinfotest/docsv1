@@ -19,7 +19,6 @@ README.md
 
 # Scripts
 build-*.js
-package*.json
 
 # IDE files
 .vscode/
