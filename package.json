@@ -10,7 +10,8 @@
     "build:github": "node build-github.js",
     "build:update": "node public/build-and-update.js",
     "pwa:update": "node public/force-pwa-update.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "node public/deploy-with-pwa-update.js"
   },
   "keywords": [
     "documentation",
