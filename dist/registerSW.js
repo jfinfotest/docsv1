@@ -1,8 +1,8 @@
-// PWA Registration - Version: c5d91a98 - 2025-10-08T15:18:43.022Z
+// PWA Registration - Version: 1d0bf66a - 2025-10-08T15:24:14.356Z
 
 // CACHE BUSTING ULTRA-AGRESIVO
-const FORCE_UPDATE_VERSION = 'c5d91a98';
-const FORCE_UPDATE_TIMESTAMP = 1759936723022;
+const FORCE_UPDATE_VERSION = '1d0bf66a';
+const FORCE_UPDATE_TIMESTAMP = 1759937054356;
 
 // Limpiar todos los caches del navegador ANTES de registrar SW
 if ('caches' in window) {
@@ -55,7 +55,7 @@ if ('serviceWorker' in navigator) {
 }
 
 function registerNewServiceWorker() {
-  navigator.serviceWorker.register('/docsv1/sw.js?v=c5d91a98&t=1759936723022&force=true', {
+  navigator.serviceWorker.register('/docsv1/sw.js?v=1d0bf66a&t=1759937054356&force=true', {
     scope: '/docsv1/',
     updateViaCache: 'none'
   }).then(registration => {
