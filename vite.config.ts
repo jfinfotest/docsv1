@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig(({ command, mode }) => {
-  // Para GitHub Pages usar el base path, para Vercel/Netlify usar rutas absolutas
-  const base = process.env.VITE_BASE_PATH || '/';
+  // Usar variable de entorno para el base path, por defecto rutas relativas
+  const base = process.env.VITE_BASE_PATH || './';
   
   return {
   plugins: [
@@ -39,8 +39,8 @@ export default defineConfig(({ command, mode }) => {
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
-        scope: base === '/' ? '/' : './',
-        start_url: base === '/' ? '/' : './',
+        scope: './',
+        start_url: './',
         icons: [
           {
             src: 'pwa_icons/android/android-launchericon-48-48.png',

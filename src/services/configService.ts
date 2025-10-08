@@ -147,34 +147,13 @@ class ConfigService {
 
   private async fetchConfig(): Promise<Config> {
     try {
-      // For standard builds (Vercel/Netlify), config.json is always at the root
-      // For GitHub Pages, it will be at the base path, but we need to load it first
-      // to determine the base path, so we try both locations
-      let response: Response;
-      let config: Config;
-      
-      // First try loading from root (works for standard builds and initial GitHub Pages load)
-      try {
-        response = await fetch('/config.json');
-        if (response.ok) {
-          config = await response.json();
-        } else {
-          throw new Error(`Failed to load from root: ${response.status}`);
-        }
-      } catch (rootError) {
-        // If root fails, try with base path (for GitHub Pages after base path is known)
-        const base = getBasePath();
-        if (base) {
-          const url = `${base}/config.json`;
-          response = await fetch(url);
-          if (!response.ok) {
-            throw new Error(`Failed to load config: ${response.status}`);
-          }
-          config = await response.json();
-        } else {
-          throw rootError;
-        }
+      const base = getBasePath();
+      const url = base ? `${base}/config.json` : 'config.json';
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Failed to load config: ${response.status}`);
       }
+      const config = await response.json();
       
       // Process dynamic values like {year}
       this.processDynamicValues(config);
