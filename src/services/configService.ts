@@ -310,7 +310,8 @@ class ConfigService {
    * Utility functions
    */
   getDocsPath(): string {
-    return '/docs';
+    const basePath = this.getBasePath();
+    return basePath ? `${basePath}/docs` : '/docs';
   }
 }
 
