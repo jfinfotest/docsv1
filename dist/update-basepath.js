@@ -97,11 +97,11 @@ function updateIndexHtml(basePath) {
         `<meta name="base-url" content="${normalizedBasePath}">`
       );
       
-      // Si no existe el meta tag, agregarlo
+      // Si no existe el meta tag, agregarlo después del primer meta tag
       if (!htmlContent.includes('<meta name="base-url"')) {
         htmlContent = htmlContent.replace(
-          /<meta charset="utf-8">/,
-          `<meta charset="utf-8">
+          /<meta([^>]*)>/,
+          `<meta$1>
     <meta name="base-url" content="${normalizedBasePath}">`
         );
       }

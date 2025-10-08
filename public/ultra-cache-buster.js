@@ -10,6 +10,34 @@
   const FORCE_UPDATE_INTERVAL = 5000; // Verificar cada 5 segundos
   const MAX_CACHE_AGE = 0; // Sin cache
   
+  // Función para detectar el basePath dinámicamente
+  function getBasePath() {
+    // Primero, intentar leer desde meta tag (establecido por update-basepath.js)
+    const metaTag = document.querySelector('meta[name="base-url"]');
+    if (metaTag) {
+      const basePath = metaTag.getAttribute('content');
+      if (basePath && basePath !== './') {
+        return basePath.endsWith('/') ? basePath : `${basePath}/`;
+      }
+    }
+    
+    // Fallback: intentar detectar desde la URL actual
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/').filter(segment => segment);
+    
+    // Si estamos en GitHub Pages, el primer segmento suele ser el basePath
+    if (pathSegments.length > 0 && window.location.hostname.includes('github.io')) {
+      return `/${pathSegments[0]}/`;
+    }
+    
+    // Para desarrollo local
+    return '/';
+  }
+  
+  // Obtener el basePath una vez al inicio
+  const BASE_PATH = getBasePath();
+  console.log(`📁 ULTRA CACHE BUSTER usando basePath: ${BASE_PATH}`);
+  
   // Función para limpiar TODO el cache del navegador
   async function nukeAllCaches() {
     try {
@@ -81,10 +109,10 @@
   // Función para forzar recarga de recursos críticos
   async function forceReloadCriticalResources() {
     const criticalFiles = [
-      '/config.json',
-      '/manifest.webmanifest',
-      '/sw.js',
-      '/registerSW.js'
+      `${BASE_PATH}config.json`,
+      `${BASE_PATH}manifest.webmanifest`,
+      `${BASE_PATH}sw.js`,
+      `${BASE_PATH}registerSW.js`
     ];
     
     for (const file of criticalFiles) {
@@ -117,7 +145,7 @@
   async function checkForUpdates() {
     try {
       const timestamp = Date.now();
-      const configUrl = `/config.json?v=${timestamp}&force=true&nocache=${Math.random()}`;
+      const configUrl = `${BASE_PATH}config.json?v=${timestamp}&force=true&nocache=${Math.random()}`;
       
       const response = await fetch(configUrl, {
         method: 'GET',
